@@ -1,0 +1,20 @@
+{
+    "name": "maniple/maniple-user-consents",
+    "description": "",
+    "type": "zend1-module",
+    "license": "proprietary",
+    "require": {
+        "maniple/maniple": "*",
+        "maniple/maniple-user": "*",
+        "xemlock/zend1-composer-installer": "^0.1.0"
+    },
+    "autoload": {
+        "classmap": [
+            "Bootstrap.php",
+            "controllers/"
+        ],
+        "psr-0": {
+            "ManipleUserConsents_": "library/"
+        }
+    }
+}

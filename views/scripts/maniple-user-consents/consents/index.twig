@@ -1,0 +1,28 @@
+<h1>Consents management</h1>
+
+<a href="{{ url('maniple-user-consents.consents.create') }}">New consent</a>
+
+<ul>
+{% for consent in consents %}
+    <li>
+        {{ consent.title }}
+
+        {% if consent.is_active %}
+            Active
+        {% else %}
+            Inactive
+        {% endif %}
+
+        {% if consent.is_required %}
+            Required
+        {% else %}
+            Optional
+        {% endif %}
+
+        <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}">Edit</a>
+        <a href="">Delete</a>
+    </li>
+{% else %}
+    <li>No consents defined</li>
+{% endfor %}
+</ul>
