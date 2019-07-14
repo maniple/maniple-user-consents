@@ -7,7 +7,7 @@
  * @method ManipleUserConsents_Model_Consent offsetGet(string $offset)
  * @method ManipleUserConsents_Model_Consent getRow(int $position, $seek = false)
  */
-class ManipleUserConsents_Model_Rowset_Consents extends Zend_Db_Table_Rowset
+class ManipleUserConsents_Model_Rowset_Consents extends Zefram_Db_Table_Rowset
 {
     const className = __CLASS__;
 

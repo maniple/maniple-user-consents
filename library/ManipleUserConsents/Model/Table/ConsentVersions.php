@@ -18,5 +18,11 @@ class ManipleUserConsents_Model_Table_ConsentVersions extends Zefram_Db_Table
 
     protected $_primary = 'consent_version_id';
 
-    protected $_referenceMap = array();
+    protected $_referenceMap = array(
+        'Consent' => array(
+            'columns'       => 'consent_id',
+            'refColumns'    => 'consent_id',
+            'refTableClass' => ManipleUserConsents_Model_Table_Consents::className,
+        ),
+    );
 }

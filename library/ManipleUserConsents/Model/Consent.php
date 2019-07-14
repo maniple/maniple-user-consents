@@ -16,4 +16,12 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     {
         return (int) $this->consent_id;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return (bool) $this->is_required;
+    }
 }

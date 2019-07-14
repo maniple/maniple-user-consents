@@ -92,4 +92,16 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
             }
         );
     }
+
+    protected function _initControllerPlugins()
+    {
+        $this->getApplication()->bootstrap('maniple');
+
+        /** @var Zend_Controller_Front $frontController */
+        $frontController = $this->getResource('FrontController');
+        $frontController->registerPlugin(
+            $this->getResource(ManipleUserConsents_Controller_Plugin_UserConsentsGuard::className),
+            -1100
+        );
+    }
 }

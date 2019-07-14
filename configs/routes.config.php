@@ -25,4 +25,12 @@ return array(
             'action'     => 'edit',
         ),
     ),
+    'maniple-user-consents.user-consents.update' => array(
+        'route'    => 'user-consents/update',
+        'defaults' => array(
+            'module'     => 'maniple-user-consents',
+            'controller' => 'user-consents',
+            'action'     => 'update',
+        ),
+    ),
 );

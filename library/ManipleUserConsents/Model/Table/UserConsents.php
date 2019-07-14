@@ -1,8 +1,6 @@
 <?php
 
 /**
- * @property ManipleUser_Model_User $User
- * @property ManipleUserConsents_Model_ConsentVersion $ConsentVersion
  * @method ManipleUserConsents_Model_UserConsent findRow(mixed $id)
  * @method ManipleUserConsents_Model_UserConsent createRow(array $data = array(), string $defaultSource = null)
  * @method ManipleUserConsents_Model_Rowset_UserConsents find(mixed $key, mixed ...$keys)
@@ -18,10 +16,7 @@ class ManipleUserConsents_Model_Table_UserConsents extends Zefram_Db_Table
 
     protected $_name = 'user_consents';
 
-    protected $_primary = array(
-        'user_id',
-        'consent_version_id',
-    );
+    protected $_primary = 'user_consent_id';
 
     protected $_referenceMap = array(
         'User' => array(

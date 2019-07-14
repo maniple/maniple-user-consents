@@ -31,6 +31,6 @@ class ManipleUserConsents_ConsentsController_IndexAction extends Maniple_Control
         $consentsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_Consents::className);
         $this->view->consents = $consentsTable->fetchAll(array(
             'deleted_at IS NULL',
-        ), array('display_order ASC'));
+        ), array('display_priority DESC'));
     }
 }
