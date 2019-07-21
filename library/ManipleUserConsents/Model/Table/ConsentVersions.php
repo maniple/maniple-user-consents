@@ -24,5 +24,10 @@ class ManipleUserConsents_Model_Table_ConsentVersions extends Zefram_Db_Table
             'refColumns'    => 'consent_id',
             'refTableClass' => ManipleUserConsents_Model_Table_Consents::className,
         ),
+        'MajorVersion' => array(
+            'columns'       => 'major_version_id',
+            'refColumns'    => 'consent_version_id',
+            'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
+        ),
     );
 }

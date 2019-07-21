@@ -42,12 +42,4 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
     {
         return $this->revoked_at !== null;
     }
-
-    /**
-     * @return bool
-     */
-    public function isMissing()
-    {
-        return $this->ConsentVersion->isRequired() && !$this->isGranted();
-    }
 }

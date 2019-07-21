@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @property ManipleUserConsents_Model_ConsentVersion $LatestVersion
+ * @property ManipleUserConsents_Model_ConsentVersion $LatestMajorVersion
  * @method ManipleUserConsents_Model_Table_Consents getTable()
  */
 class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row

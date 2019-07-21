@@ -15,6 +15,18 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
      */
     protected $_db;
 
+    /**
+     * @Inject
+     * @var ManipleUserConsents_Model_Table_Consents
+     */
+    protected $_consentsTable;
+
+    /**
+     * @Inject
+     * @var ManipleUserConsents_Model_Table_ConsentVersions
+     */
+    protected $_consentVersionsTable;
+
     protected function _init()
     {
         parent::_init();
@@ -42,20 +54,35 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
 
     protected function _process()
     {
-        /** @var ManipleUserConsents_Model_Table_Consents $consentsTable */
-        $consentsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_Consents::className);
+        $this->_db->beginTransaction();
+        try {
+            $consent = $this->_consentsTable->createRow(array(
+                'is_required' => (int) $this->_form->getValue('is_required'),
+                'is_active'   => (int) $this->_form->getValue('is_active'),
+                'created_at'  => time(),
+                'updated_at'  => time(),
+            ));
+            $consent->save();
 
-        $consent = $consentsTable->createRow(array(
-            'title' => $this->_form->getValue('title'),
-            'body'  => $this->_form->getValue('body'),
-            'body_type' => 'html',
-            'is_required' => (int) $this->_form->getValue('is_required'),
-            'is_active' => (int) $this->_form->getValue('is_active'),
-            'created_at' => time(),
-            'updated_at' => time(),
-            'display_order' => 0,
-        ));
-        $consent->save();
+            $consentVersion = $this->_consentVersionsTable->createRow(array(
+                'created_at' => time(),
+                'updated_at' => time(),
+                'title'      => $this->_form->getValue('title'),
+                'body'       => $this->_form->getValue('body'),
+            ));
+            $consentVersion->Consent = $consent;
+            $consentVersion->save();
+
+            $consent->LatestVersion = $consentVersion;
+            $consent->LatestMajorVersion = $consentVersion;
+            $consent->save();
+
+            $this->_db->commit();
+
+        } catch (Exception $e) {
+            $this->_db->rollBack();
+            throw $e;
+        }
 
         return $this->view->url('maniple-user-consents.consents.index');
     }

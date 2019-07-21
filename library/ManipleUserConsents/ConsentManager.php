@@ -36,6 +36,25 @@ class ManipleUserConsents_ConsentManager
 
     /**
      * @param int|ManipleUserConsents_Model_Consent $consent
+     * @return ManipleUserConsents_Model_Consent
+     * @throws Exception
+     */
+    public function fetchConsent($consent)
+    {
+        if (!$consent instanceof ManipleUserConsents_Model_Consent) {
+            $consentId = $consent;
+            $consent = $this->_consentsTable->find((int) $consent)->current();
+
+            if (!$consent) {
+                throw new Exception(sprintf('Invalid consent ID %s', $consentId));
+            }
+        }
+
+        return $consent;
+    }
+
+    /**
+     * @param int|ManipleUserConsents_Model_Consent $consent
      * @return ManipleUserConsents_Model_ConsentVersion
      */
     public function fetchConsentSnapshot($consent)
@@ -49,12 +68,12 @@ class ManipleUserConsents_ConsentManager
             }
         }
 
+
+
         $data = array(
             'consent_id'  => (int) $consent->getId(),
             'title'       => $this->_normalize($consent->title),
             'body'        => $this->_normalize($consent->body),
-            'body_type'   => $consent->body_type,
-            'is_required' => (int) (bool) $consent->is_required,
         );
         $hash = sha1(Zefram_Json::encode($data, array(
             'unencodedSlashes' => true,
@@ -150,18 +169,25 @@ class ManipleUserConsents_ConsentManager
      */
     public function saveUserConsent(ManipleUser_Model_UserInterface $user, $consentId, $decision)
     {
-        $snapshot = $this->fetchConsentSnapshot($consentId);
+        $consent = $this->fetchConsent($consentId);
         $userConsent = $this->_userConsentsTable->createRow(array(
-            'consent_id'         => $snapshot->Consent->getId(),
-            'consent_version_id' => $snapshot->getId(),
+            'consent_id'         => $consent->getId(),
+            'consent_version_id' => $consent->LatestVersion->getId(),
+            'major_version_id'   => $consent->LatestVersion->getMajorVersionId(),
             'user_id'            => $user->getId(),
             'saved_at'           => time(),
-            'decision'           => (int) $decision,
-            'display_priority'   => $snapshot->Consent->display_priority,
+            'is_required'        => $consent->isRequired() ? 1 : 0,
+            'decision'           => $decision ? 1 : 0,
+            'display_priority'   => $consent->display_priority,
         ));
         $userConsent->save();
 
         return $userConsent;
+    }
+
+    public function updateConsent(ManipleUserConsents_Model_Consent $consent)
+    {
+
     }
 
     /**
@@ -176,31 +202,68 @@ class ManipleUserConsents_ConsentManager
             $userId = (int) $user;
         }
 
-        // TODO This can be cached
-        $activeConsents = $this->_consentsTable->fetchAll(array('is_active <> 0'));
+        $activeConsentsRowset = $this->_consentsTable->fetchAll(array(
+            'deleted_at = 0',
+            'is_active <> 0',
+        ));
 
-        if (!count($activeConsents)) {
+        if (!count($activeConsentsRowset)) {
             return true;
         }
 
-        // TODO this can be calculated at login - and stored in session
-        $userConsents = $this->_userConsentsTable
-            ->fetchAll(array(
-                'user_id = ?' => $userId,
-                'consent_version_id IN (?)' => $activeConsents->collectColumn('current_version_id')
-            ));
-
-        if (count($userConsents) < count($activeConsents)) {
-            return false;
+        /** @var ManipleUserConsents_Model_Consent[] $activeConsents */
+        $activeConsents = array();
+        foreach ($activeConsentsRowset as $row) {
+            if ($row->major_version_id) {
+                $activeConsents[$row->major_version_id] = $row;
+            }
         }
 
-        foreach ($userConsents as $userConsent) {
+        $userConsentsRowset = $this->_userConsentsTable->fetchAll(array(
+            'user_id = ?' => $userId,
+            'revoked_at IS NULL',
+        ));
+
+        /** @var ManipleUserConsents_Model_UserConsent[] $userConsents */
+        $userConsents = array();
+        foreach ($userConsentsRowset as $userConsent) {
             /** @var ManipleUserConsents_Model_UserConsent $userConsent */
-            if ($userConsent->isMissing()) {
+            $majorVersionId = $userConsent->ConsentVersion->getMajorVersionId();
+
+            if (isset($activeConsents[$majorVersionId])) {
+                // either no consent was detected previously, or consent explicitly given
+                if (empty($userConsents[$majorVersionId]) || $userConsent->isGranted()) {
+                    $userConsents[$majorVersionId] = $userConsent;
+                }
+            }
+        }
+
+        foreach ($activeConsents as $majorVersionId => $consent) {
+            if (empty($userConsents[$majorVersionId])) {
+                return false;
+            }
+            if ($consent->isRequired() && !$userConsents[$majorVersionId]->isGranted()) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function getConsentDecision($name)
+    {
+        if (!$this->_userContext->isAuthenticated()) {
+            return false;
+        }
+        $userId = (int) $this->_userContext->getUser()->getId();
+        $userConsent = $this->_userConsentsTable->fetchRow(array(
+            'user_id = ?' => $userId,
+            'user_setting = ?' => (string) $name,
+        ));
+        return $userConsent && $userConsent->isGranted();
     }
 }

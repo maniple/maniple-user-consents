@@ -43,9 +43,21 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
                 ),
                 'is_required' => array(
                     'type' => 'checkbox',
+                    'options' => array(
+                        'label' => 'This consent is obligatory',
+                    ),
                 ),
                 'is_active' => array(
                     'type' => 'checkbox',
+                    'options' => array(
+                        'label' => 'Should this consent be enabled?',
+                    ),
+                ),
+                'create_major_version' => array(
+                    'type' => 'checkbox',
+                    'options' => array(
+                        'label' => 'Create a major consent revision. This will force all existing users to review and update their consents after logging in.',
+                    ),
                 ),
                 '__submit' => array(
                     'type' => 'submit',
@@ -59,13 +71,63 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
     {
         $data = $this->_form->getValues();
 
-        $this->_consent->title = $data['title'];
-        $this->_consent->body = $data['body'];
-        $this->_consent->is_required = (int) (bool) $data['is_required'];
-        $this->_consent->is_active = (int) (bool) $data['is_active'];
-        $this->_consent->updated_at = time();
+        $consent = $this->_consent;
+        $this->_db->beginTransaction();
 
-        $this->_consent->save();
+        try {
+            /** @var ManipleUserConsents_Model_Table_UserConsents $userConsentsTable */
+            $userConsentsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_UserConsents::className);
+
+            // detect changes first
+            $latestVersion = $consent->LatestVersion;
+
+            // Consent versions referenced by UserConsents are immutable
+            $shouldCreateNewVersion =
+                $userConsentsTable->countByConsentVersion($latestVersion)
+                && ($data['title'] !== $latestVersion->title || $data['body'] !== $latestVersion->body);
+
+            if ($shouldCreateNewVersion) {
+                /** @var ManipleUserConsents_Model_Table_ConsentVersions $consentVersionsTable */
+                $consentVersionsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_ConsentVersions::className);
+                $version = $consentVersionsTable->createRow(array(
+                    'consent_id' => $consent->getId(),
+                    'created_at' => time(),
+                ));
+            } else {
+                $version = $consent->LatestVersion;
+            }
+
+            $shouldCreateMajorVersion = $data['create_major_version'];
+            if ($shouldCreateMajorVersion) {
+                // create major version or promote existing version to major, if there are none user consents
+                $version->major_version_id = null;
+            } elseif ($version !== $latestVersion) {
+                $prevVersion = $latestVersion;
+                $version->major_version_id = $prevVersion->isMajorVersion()
+                    ? $prevVersion->getId()
+                    : $prevVersion->MajorVersion->getId();
+            }
+
+            $version->title = $data['title'];
+            $version->body = $data['body'];
+            $version->updated_at = time();
+            $version->save();
+
+            $consent->updated_at = time();
+            $consent->is_required = $data['is_required'] ? 1 : 0;
+            $consent->is_active = $data['is_active'] ? 1 : 0;
+            $consent->LatestVersion = $version;
+            if ($version->isMajorVersion()) {
+                $consent->LatestMajorVersion = $version;
+            }
+            $consent->save();
+
+            $this->_db->commit();
+
+        } catch (Exception $e) {
+            $this->_db->rollBack();
+            throw $e;
+        }
 
         return $this->view->url('maniple-user-consents.consents.index');
     }
