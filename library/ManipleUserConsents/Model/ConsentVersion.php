@@ -11,17 +11,12 @@ class ManipleUserConsents_Model_ConsentVersion extends Zefram_Db_Table_Row
 
     protected $_tableClass = ManipleUserConsents_Model_Table_ConsentVersions::className;
 
+    /**
+     * @return int
+     */
     public function getId()
     {
         return (int) $this->consent_version_id;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRequired()
-    {
-        return (bool) $this->is_required;
     }
 
     /**

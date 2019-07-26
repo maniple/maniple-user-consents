@@ -54,7 +54,7 @@ class ManipleUserConsents_Model_Table_UserConsents extends Zefram_Db_Table
         $select->where('consent_version_id = ?', $consentVersionId);
         $select->limit(1);
 
-        $result = $select->query(Zend_Db::FETCH_COLUMN)->fetchColumn();
+        $result = $select->query()->fetchColumn(0);
 
         return $result;
     }

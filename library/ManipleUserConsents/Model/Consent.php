@@ -26,4 +26,20 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     {
         return (bool) $this->is_required;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle()
+    {
+        return $this->LatestVersion ? $this->LatestVersion->title : null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBody()
+    {
+        return $this->LatestVersion ? $this->LatestVersion->body : null;
+    }
 }

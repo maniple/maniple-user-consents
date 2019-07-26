@@ -59,12 +59,26 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
                         'label' => 'Create a major consent revision. This will force all existing users to review and update their consents after logging in.',
                     ),
                 ),
+                'system_key' => array(
+                    'type' => 'text',
+                    'options' => array(
+                        'required' => true,
+                        'label' => 'System key',
+                        // TODO: check uniqueness in consentsTable, allowing current id
+                    ),
+                ),
                 '__submit' => array(
                     'type' => 'submit',
                 ),
             ),
         ));
-        $this->_form->setDefaults($consent->toArray());
+        $this->_form->setDefaults(array_merge(
+            $consent->toArray(),
+            array(
+                'title' => $consent->getTitle(),
+                'body'  => $consent->getBody(),
+            )
+        ));
     }
 
     protected function _process()

@@ -22,12 +22,12 @@ class ManipleUserConsents_Model_Table_Consents extends Zefram_Db_Table
         'LatestVersion' => array(
             'columns'       => 'latest_version_id',
             'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
-            'refColumns'    => 'latest_version_id',
+            'refColumns'    => 'consent_version_id',
         ),
         'LatestMajorVersion' => array(
-            'columns'       => 'major_version_id',
+            'columns'       => 'latest_major_version_id',
             'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
-            'refColumns'    => 'latest_version_id',
+            'refColumns'    => 'consent_version_id',
         ),
     );
 }

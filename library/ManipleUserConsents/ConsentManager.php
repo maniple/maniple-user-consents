@@ -5,6 +5,12 @@ class ManipleUserConsents_ConsentManager
     const className = __CLASS__;
 
     /**
+     * @Inject
+     * @var Zefram_Db
+     */
+    protected $_db;
+
+    /**
      * @Inject('user.sessionManager')
      * @var ManipleUser_Service_Security
      */
@@ -203,7 +209,7 @@ class ManipleUserConsents_ConsentManager
         }
 
         $activeConsentsRowset = $this->_consentsTable->fetchAll(array(
-            'deleted_at = 0',
+            'deleted_at IS NULL',
             'is_active <> 0',
         ));
 
@@ -214,25 +220,53 @@ class ManipleUserConsents_ConsentManager
         /** @var ManipleUserConsents_Model_Consent[] $activeConsents */
         $activeConsents = array();
         foreach ($activeConsentsRowset as $row) {
-            if ($row->major_version_id) {
-                $activeConsents[$row->major_version_id] = $row;
+            if ($row->latest_major_version_id) {
+                $activeConsents[$row->latest_major_version_id] = $row;
             }
         }
 
-        $userConsentsRowset = $this->_userConsentsTable->fetchAll(array(
-            'user_id = ?' => $userId,
-            'revoked_at IS NULL',
+        $userConsentsRowset = array();
+
+        $select = $this->_db->select();
+        $select->from(
+            array('uc' => $this->_userConsentsTable->getName()),
+            $this->_userConsentsTable->getColsForSelect('uc__')
+        );
+        $select->joinLeft(
+            array('ucs' => $this->_db->getTable('ManipleUserConsents_Model_Table_UserConsentStates')->getName()),
+            'ucs.user_consent_id = uc.user_consent_id',
+            $this->_db->getTable('ManipleUserConsents_Model_Table_UserConsentStates')->getColsForSelect('ucs__')
+        );
+        $select->where(array(
+            'uc.user_id = ?' => $userId,
+            'ucs.state IN (?)' => array('GRANTED', 'DECLINED'),
         ));
 
         /** @var ManipleUserConsents_Model_UserConsent[] $userConsents */
         $userConsents = array();
+        foreach ($select->query()->fetchAll() as $row) {
+            $data = array();
+            foreach ($row as $col => $value) {
+                list($prefix, $col) = explode('__', $col, 2);
+                $data[$prefix][$col] = $value;
+            }
+
+            $userConsent = $this->_userConsentsTable->_createStoredRow($data['uc']);
+            $userConsentState = $this->_db->getTable('ManipleUserConsents_Model_Table_UserConsentStates')->_createStoredRow($data['ucs']);
+            if ($userConsentState->getId()) {
+                $userConsent->UserConsentState = $userConsentState;
+            }
+
+            $userConsents[] = $userConsent;
+        }
+
         foreach ($userConsentsRowset as $userConsent) {
             /** @var ManipleUserConsents_Model_UserConsent $userConsent */
             $majorVersionId = $userConsent->ConsentVersion->getMajorVersionId();
 
             if (isset($activeConsents[$majorVersionId])) {
                 // either no consent was detected previously, or consent explicitly given
-                if (empty($userConsents[$majorVersionId]) || $userConsent->isGranted()) {
+                if (empty($userConsents[$majorVersionId]) || $userConsent->isAccepted()) {
                     $userConsents[$majorVersionId] = $userConsent;
                 }
             }
@@ -242,7 +276,7 @@ class ManipleUserConsents_ConsentManager
             if (empty($userConsents[$majorVersionId])) {
                 return false;
             }
-            if ($consent->isRequired() && !$userConsents[$majorVersionId]->isGranted()) {
+            if ($consent->isRequired() && !$userConsents[$majorVersionId]->isAccepted()) {
                 return false;
             }
         }
@@ -264,6 +298,6 @@ class ManipleUserConsents_ConsentManager
             'user_id = ?' => $userId,
             'user_setting = ?' => (string) $name,
         ));
-        return $userConsent && $userConsent->isGranted();
+        return $userConsent && $userConsent->isAccepted();
     }
 }

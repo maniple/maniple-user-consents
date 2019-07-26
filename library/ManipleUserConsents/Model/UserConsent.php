@@ -9,22 +9,18 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
 {
     const className = __CLASS__;
 
+    const STATE_ACCEPTED = 'ACCEPTED';
+    const STATE_DECLINED = 'DECLINED';
+    const STATE_REVOKED  = 'REVOKED';
+
     protected $_tableClass = ManipleUserConsents_Model_Table_UserConsents::className;
 
     /**
      * @return bool
      */
-    public function getDecision()
+    public function isAccepted()
     {
-        return (bool) $this->decision;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGranted()
-    {
-        return $this->getDecision() && !$this->isRevoked();
+        return $this->state === self::STATE_ACCEPTED;
     }
 
     /**
@@ -32,7 +28,7 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
      */
     public function isDeclined()
     {
-        return !$this->getDecision() && !$this->isRevoked();
+        return $this->state === self::STATE_DECLINED;
     }
 
     /**
@@ -40,6 +36,6 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
      */
     public function isRevoked()
     {
-        return $this->revoked_at !== null;
+        return $this->state === self::STATE_REVOKED;
     }
 }
