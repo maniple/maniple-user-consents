@@ -2,6 +2,7 @@
 
 /**
  * @property Zend_Controller_Request_Http $_request
+ * @method void checkAccess()
  */
 class ManipleUserConsents_ConsentsController_IndexAction extends Maniple_Controller_Action_Standalone
 {
@@ -21,16 +22,25 @@ class ManipleUserConsents_ConsentsController_IndexAction extends Maniple_Control
      */
     protected $_userContext;
 
+    /**
+     * @Inject
+     * @var ManipleCore_Settings_SettingsManager
+     */
+    protected $_settingsManager;
+
     public function run()
     {
-        if (!$this->_userContext->isAuthenticated() || !$this->_userContext->isSuperUser()) {
-            throw new Maniple_Controller_Exception_NotAllowed();
-        }
+        $this->checkAccess();
 
         /** @var ManipleUserConsents_Model_Table_Consents $consentsTable */
         $consentsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_Consents::className);
         $this->view->consents = $consentsTable->fetchAll(array(
             'deleted_at IS NULL',
         ), array('display_priority DESC'));
+
+        $this->view->assign(array(
+            'consentsReviewTitle' => (string) $this->_settingsManager->get(ManipleUserConsents_ConsentsReview::TITLE_SETTING),
+            'consentsReviewBody'  => (string) $this->_settingsManager->get(ManipleUserConsents_ConsentsReview::BODY_SETTING),
+        ));
     }
 }

@@ -1,0 +1,32 @@
+{# requires elem variable to be provided #}
+{% do elem.setAttrib('class', 'form-control') %}
+{% block element %}
+    <div class="form-group{% if elem.isRequired() %} form-control-required{% endif %}{% if elem.hasErrors() %} has-error{% endif %}" style="margin-bottom:30px;">
+        {% block label %}
+            <label for="{{ elem.getId() }}" class="control-label">
+                {{ (elem.isRequired() ? requiredLabel(elem.getLabel()) : elem.getLabel()) | raw }}
+            </label>
+        {% endblock %}
+
+        {% block description %}
+            {%- if elem.getDescription() -%}
+                <p class="form-help-block help-block" style="font-size: .8em; margin-top: -5px; color: rgba(0, 0, 0, .55)">
+                    {{- elem.getDescription() | raw -}}
+                </p>
+            {%- endif -%}
+        {% endblock %}
+
+        {% block input %}
+            {{- elem.renderViewHelper() | raw -}}
+        {% endblock %}
+
+        {% block errors %}
+            {%- if elem.hasErrors() -%}
+                <div class="control-errors">
+                    {{ elem.renderErrors() | raw }}
+                </div>
+            {%- endif -%}
+        {% endblock %}
+
+    </div>
+{% endblock %}

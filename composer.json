@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "maniple/maniple": "*",
+        "maniple/maniple-core": "*",
         "maniple/maniple-user": "*",
         "xemlock/zend1-composer-installer": "^0.1.0"
     },

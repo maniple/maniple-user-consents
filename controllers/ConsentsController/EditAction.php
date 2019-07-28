@@ -2,6 +2,7 @@
 
 /**
  * @property Zend_Controller_Request_Http $_request
+ * @method void checkAccess()
  */
 class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controller_Action_StandaloneForm
 {
@@ -23,6 +24,7 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
     protected function _init()
     {
         parent::_init();
+        $this->checkAccess();
 
         /** @var ManipleUserConsents_Model_Table_Consents $consentsTable */
         $consentsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_Consents::className);
@@ -33,51 +35,12 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
         }
 
         $this->_consent = $consent;
-        $this->_form = new Zefram_Form2(array(
-            'elements' => array(
-                'title' => array(
-                    'type' => 'text',
-                ),
-                'body' => array(
-                    'type' => 'textarea',
-                ),
-                'is_required' => array(
-                    'type' => 'checkbox',
-                    'options' => array(
-                        'label' => 'This consent is obligatory',
-                    ),
-                ),
-                'is_active' => array(
-                    'type' => 'checkbox',
-                    'options' => array(
-                        'label' => 'Should this consent be enabled?',
-                    ),
-                ),
-                'create_major_version' => array(
-                    'type' => 'checkbox',
-                    'options' => array(
-                        'label' => 'Create a major consent revision. This will force all existing users to review and update their consents after logging in.',
-                    ),
-                ),
-                'system_key' => array(
-                    'type' => 'text',
-                    'options' => array(
-                        'required' => true,
-                        'label' => 'System key',
-                        // TODO: check uniqueness in consentsTable, allowing current id
-                    ),
-                ),
-                '__submit' => array(
-                    'type' => 'submit',
-                ),
-            ),
-        ));
-        $this->_form->setDefaults(array_merge(
-            $consent->toArray(),
-            array(
-                'title' => $consent->getTitle(),
-                'body'  => $consent->getBody(),
-            )
+
+        $this->_form = new ManipleUserConsents_Form_Consent($consent);
+        $this->_form->addElement('checkbox', 'create_major_version', array(
+            'label'       => 'Create major revision',
+            'description' => 'This will force all existing users to review and update their consents after logging in',
+            'type'        => 'checkbox',
         ));
     }
 

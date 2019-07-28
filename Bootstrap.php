@@ -5,6 +5,7 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
     public function getModuleDependencies()
     {
         return array(
+            'maniple-core',
             'maniple-user',
         );
     }
@@ -102,6 +103,37 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
         $frontController->registerPlugin(
             $this->getResource(ManipleUserConsents_Controller_Plugin_UserConsentsGuard::className),
             -1100
+        );
+    }
+
+    protected function _initSettingsManager()
+    {
+        $this->getApplication()->bootstrap('maniple');
+
+        /** @var Zend_EventManager_SharedEventManager $sharedEventManager */
+        $sharedEventManager = $this->getResource('SharedEventManager');
+        $sharedEventManager->attach(
+            ManipleCore_Settings_SettingsManager::className,
+            'init',
+            function (Zend_EventManager_Event $event) {
+                /** @var ManipleCore_Settings_SettingsManager $settingsManager */
+                $settingsManager = $event->getTarget();
+
+                $settingsManager->register(
+                    ManipleUserConsents_ConsentsReview::TITLE_SETTING,
+                    array(
+                        'type'    => 'string',
+                        'default' => ManipleUserConsents_ConsentsReview::TITLE_DEFAULT,
+                    )
+                );
+                $settingsManager->register(
+                    ManipleUserConsents_ConsentsReview::BODY_SETTING,
+                    array(
+                        'type'    => 'string',
+                        'default' => ManipleUserConsents_ConsentsReview::BODY_DEFAULT,
+                    )
+                );
+            }
         );
     }
 }

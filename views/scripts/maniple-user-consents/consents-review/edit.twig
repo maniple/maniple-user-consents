@@ -1,0 +1,37 @@
+<style>
+    .breadcrumb {
+        background: none;
+        padding: 8px 0;
+    }
+    .consents__page {
+        position: relative;
+        display: block;
+        padding: 20px 50px 40px;
+        min-height: 480px;
+    }
+    .consents__page h1 {
+        margin: 0 0 40px;
+    }
+</style>
+<article class="consents__page">
+    <ol class="breadcrumb">
+        <li><a href="{{ baseUrl() }}">Start</a></li>
+        <li><a href="{{ url('maniple-user-consents.consents.index') }}">{{ translate('Consents management') }}</a></li>
+        <li class="active">Consents Review</li>
+    </ol>
+
+    <h1>Consents Review</h1>
+
+    {{ form().openTag(form) | raw }}
+
+    {% for elem in form.elements %}
+        {{ renderScript('maniple-user-consents/forms/element.twig', { elem: elem }) | raw }}
+    {% endfor %}
+
+    <p class="text-center">
+        <button type="submit" class="btn btn-primary">{{ translate('Save') }}</button>
+    </p>
+
+    {{ form().closeTag() | raw }}
+</article>
+<script src="{{ asset('doko:vendor/tinymce/tinymce.min.js') }}"></script>

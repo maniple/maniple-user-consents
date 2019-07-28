@@ -2,6 +2,7 @@
 
 /**
  * @property Zend_Controller_Request_Http $_request
+ * @method void checkAccess()
  */
 class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Controller_Action_StandaloneForm
 {
@@ -30,40 +31,9 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
     protected function _init()
     {
         parent::_init();
+        $this->checkAccess();
 
-        $this->_form = new Zefram_Form2(array(
-            'elements' => array(
-                'title' => array(
-                    'type' => 'text',
-                ),
-                'body' => array(
-                    'type' => 'textarea',
-                ),
-                'is_required' => array(
-                    'type' => 'checkbox',
-                    'options' => array(
-                        'label' => 'Is required?',
-                    ),
-                ),
-                'is_active' => array(
-                    'type' => 'checkbox',
-                    'options' => array(
-                        'label' => 'Is active?',
-                    ),
-                ),
-                'system_key' => array(
-                    'type' => 'text',
-                    'options' => array(
-                        'required' => true,
-                        'label' => 'System key',
-                        // TODO: check uniqueness in consentsTable
-                    ),
-                ),
-                '__submit' => array(
-                    'type' => 'submit',
-                ),
-            ),
-        ));
+        $this->_form = new ManipleUserConsents_Form_Consent();
     }
 
     protected function _process()
@@ -73,7 +43,7 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
             $consent = $this->_consentsTable->createRow(array(
                 'is_required' => (int) $this->_form->getValue('is_required'),
                 'is_active'   => (int) $this->_form->getValue('is_active'),
-                'system_key'  => $this->_form->getValue('system_key'),
+                'display_priority' => (int) $this->_form->getValue('display_priority'),
             ));
             $consent->save();
 

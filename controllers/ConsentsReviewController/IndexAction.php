@@ -3,17 +3,17 @@
 /**
  * @property Zend_Controller_Request_Http $_request
  */
-class ManipleUserConsents_UserConsentsController_UpdateRequiredAction extends Maniple_Controller_Action_StandaloneForm
+class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_Controller_Action_StandaloneForm
 {
     const className = __CLASS__;
 
-    protected $_actionControllerClass = ManipleUserConsents_UserConsentsController::className;
+    protected $_actionControllerClass = ManipleUserConsents_ConsentsReviewController::className;
 
     /**
-     * @Inject('ManipleUser.UserSettings')
-     * @var ManipleUser_UserSettings_Service
+     * @Inject
+     * @var ManipleCore_Settings_SettingsManager
      */
-    protected $_userSettings;
+    protected $_settingsManager;
 
     /**
      * @Inject
@@ -50,6 +50,11 @@ class ManipleUserConsents_UserConsentsController_UpdateRequiredAction extends Ma
             $this->_helper->redirector->gotoUrlAndExit('/');
             exit;
         }
+
+        $this->view->assign(array(
+            'title' => (string) $this->_settingsManager->get(ManipleUserConsents_ConsentsReview::TITLE_SETTING),
+            'body'  => (string) $this->_settingsManager->get(ManipleUserConsents_ConsentsReview::BODY_SETTING),
+        ));
     }
 
     protected function _prepare()

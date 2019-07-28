@@ -1,8 +1,12 @@
 <style>
+    .breadcrumb {
+        background: none;
+        padding: 8px 0;
+    }
     .consents__page {
         position: relative;
         display: block;
-        padding: 40px 50px;
+        padding: 20px 50px 40px;
         min-height: 480px;
     }
     .consents__page h1 {
@@ -10,8 +14,8 @@
     }
     .consents__new-consent {
         position: absolute;
-        top: 40px;
-        right: 50px;
+        top: 0px;
+        right: 10px;
     }
     .consents__list {
         list-style: none;
@@ -56,48 +60,74 @@
         text-align: right;
     }
 </style>
+
+
 <article class="consents__page">
+    <ol class="breadcrumb">
+        <li><a href="{{ baseUrl() }}">Start</a></li>
+        <li class="active">{{ translate('Consents management') }}</li>
+    </ol>
+
 <h1>{{ translate('Consents management') }}</h1>
 
-<a href="{{ url('maniple-user-consents.consents.create') }}" class="consents__new-consent btn btn-primary">
-    <i class="fa fa-plus"></i>
-    {{ translate('New consent') }}
-</a>
 
-<ul class="consents__list">
-{% for consent in consents %}
-    <li>
-        <div class="col">
-            <div class="consents__list-item-title{% if not consent.is_active %} is-inactive{% endif %}">
-                <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}">
-                    {{- consent.title -}}
+<div style="position:relative;margin-bottom:40px;">
+    <h2>Zdefiniowane zgody</h2>
+    <a href="{{ url('maniple-user-consents.consents.create') }}" class="consents__new-consent btn btn-primary">
+        <i class="fa fa-plus"></i>
+        {{ translate('New consent') }}
+    </a>
+
+{% if consents|length %}
+    <ul class="consents__list">
+    {% for consent in consents %}
+        <li>
+            <div class="col">
+                <div class="consents__list-item-title{% if not consent.is_active %} is-inactive{% endif %}">
+                    <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}">
+                        {{- consent.title -}}
+                    </a>
+                    <small>
+                        {% if consent.is_active %}
+                            {{ translate('Active') }}
+                        {% else %}
+                            {{ translate('Inactive') }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <div class="consents__list-item-status">
+                {% if consent.is_required %}
+                    {{ translate('Required') }}
+                {% else %}
+                    {{ translate('Optional') }}
+                {% endif %}
+                </div>
+            </div>
+            <div class="col col-actions">
+                <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}" class="btn btn-sm btn-primary">
+                    <i class="fa fa-pencil"></i>
+                    {{ translate('Edit') }}
                 </a>
-                <small>
-                    {% if consent.is_active %}
-                        {{ translate('Active') }}
-                    {% else %}
-                        {{ translate('Inactive') }}
-                    {% endif %}
-                </small>
             </div>
-
-            <div class="consents__list-item-status">
-            {% if consent.is_required %}
-                {{ translate('Required') }}
-            {% else %}
-                {{ translate('Optional') }}
-            {% endif %}
-            </div>
-        </div>
-        <div class="col col-actions">
-            <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}" class="btn btn-sm btn-primary">
-                <i class="fa fa-pencil"></i>
-                {{ translate('Edit') }}
-            </a>
-        </div>
-    </li>
+        </li>
+    {% endfor %}
+    </ul>
 {% else %}
-    <li>No consents defined</li>
-{% endfor %}
-</ul>
+    <p>{{ translate('No consents defined') }}</p>
+{% endif %}
+</div>
+
+<div style="position:relative;">
+    <h2>Strona aktualizacji zgód</h2>
+    <a href="{{ url('maniple-user-consents.consents-review.edit') }}" class="consents__new-consent btn btn-primary">
+        <i class="fa fa-pencil"></i>
+        {{ translate('Edit') }}
+    </a>
+</div>
+
+<div>{{ consentsReviewTitle }}</div>
+
+<div>{{ consentsReviewBody | raw }}</div>
+
 </article>

@@ -1,0 +1,23 @@
+{% extends 'maniple-user-consents/forms/element.twig' %}
+
+{% block element %}
+    {% set id = elem.getId() %}
+    <div id="elem-{{ id }}-wrapper" class="form-group{% if elem.isRequired() %} form-control-required{% endif %}{% if elem.hasErrors() %} has-error{% endif %}" style="margin-bottom:30px">
+
+        {% block input %}
+            <div class="element-options" style="position:relative;padding-left:25px;">
+                {% set id = elem.getId() ~ '-option-' ~ value %}
+                {# compare values by casting them to string, otherwise 0 == null #}
+                <div style="position: absolute;top:-7px;left:0;">
+                    {{ elem.setAttrib('id', id).renderViewHelper() | raw }}
+                </div>
+                <label for="{{ id }}" class="option-label" style="font-weight:normal;">
+                    {{ (elem.isRequired() ? requiredLabel(elem.getLabel()) : elem.getLabel()) | raw }}
+                </label>
+                {{ block('description') }}
+            </div>
+        {% endblock %}
+
+        {{ block('errors') }}
+    </div>
+{% endblock %}

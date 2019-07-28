@@ -1,3 +1,5 @@
+# noinspection SqlResolveForFile
+
 CREATE TABLE consent_versions (
 
     consent_version_id      INTEGER PRIMARY KEY AUTO_INCREMENT,

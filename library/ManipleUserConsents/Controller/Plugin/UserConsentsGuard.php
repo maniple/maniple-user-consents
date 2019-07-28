@@ -43,8 +43,8 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
         }
 
         $request->setModuleName('maniple-user-consents');
-        $request->setControllerName('user-consents');
-        $request->setActionName('update-required');
+        $request->setControllerName('consents-review');
+        $request->setActionName('index');
         $request->setParam('hasMissingConsents', true);
     }
 }

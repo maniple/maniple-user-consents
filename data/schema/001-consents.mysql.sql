@@ -16,9 +16,6 @@ CREATE TABLE consents (
 
     latest_version_id       INTEGER,
 
-    -- for tracking whether users have responded to active consents
-    latest_major_version_id INTEGER,
-
-    system_key              VARCHAR(128) NOT NULL UNIQUE
+    latest_major_version_id INTEGER
 
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
