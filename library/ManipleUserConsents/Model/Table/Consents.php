@@ -21,13 +21,13 @@ class ManipleUserConsents_Model_Table_Consents extends Zefram_Db_Table
     protected $_referenceMap = array(
         'LatestVersion' => array(
             'columns'       => 'latest_version_id',
-            'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
             'refColumns'    => 'consent_version_id',
+            'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
         ),
         'LatestMajorVersion' => array(
             'columns'       => 'latest_major_version_id',
-            'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
             'refColumns'    => 'consent_version_id',
+            'refTableClass' => ManipleUserConsents_Model_Table_ConsentVersions::className,
         ),
     );
 }

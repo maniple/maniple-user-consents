@@ -103,10 +103,8 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
             if ($shouldCreateNewVersion) {
                 /** @var ManipleUserConsents_Model_Table_ConsentVersions $consentVersionsTable */
                 $consentVersionsTable = $this->_db->getTable(ManipleUserConsents_Model_Table_ConsentVersions::className);
-                $version = $consentVersionsTable->createRow(array(
-                    'consent_id' => $consent->getId(),
-                    'created_at' => time(),
-                ));
+                $version = $consentVersionsTable->createRow();
+                $version->Consent = $consent;
             } else {
                 $version = $consent->LatestVersion;
             }
@@ -124,10 +122,8 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
 
             $version->title = $data['title'];
             $version->body = $data['body'];
-            $version->updated_at = time();
             $version->save();
 
-            $consent->updated_at = time();
             $consent->is_required = $data['is_required'] ? 1 : 0;
             $consent->is_active = $data['is_active'] ? 1 : 0;
             $consent->LatestVersion = $version;

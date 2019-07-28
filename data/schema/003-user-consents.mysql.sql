@@ -22,8 +22,6 @@ CREATE TABLE user_consents (
 
     CONSTRAINT user_consents_consent_version_id_fkey
         FOREIGN KEY (consent_version_id)
-        REFERENCES consent_versions (consent_version_id),
-
-    INDEX user_consents_user_id_state_idx (user_id, state)
+        REFERENCES consent_versions (consent_version_id)
 
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

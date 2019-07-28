@@ -34,13 +34,17 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
             return;
         }
 
-        // TODO: ignore urls from cache
-        if ($this->_consentManager->userHasAllActiveConsents($this->_authContext->getUser()->getId())) {
+        // To nie moze byc w sesji, bo po zmianach ktore zrobi admin nie ma szans na odswiezenie
+        // - to musi byc w cache'u?
+        $missingConsents = $this->_consentManager->getMissingConsents($this->_authContext->getUser()->getId());
+
+        if (empty($missingConsents)) {
             return;
         }
 
         $request->setModuleName('maniple-user-consents');
         $request->setControllerName('user-consents');
-        $request->setActionName('update');
+        $request->setActionName('update-required');
+        $request->setParam('hasMissingConsents', true);
     }
 }

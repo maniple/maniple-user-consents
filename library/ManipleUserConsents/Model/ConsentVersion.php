@@ -24,7 +24,7 @@ class ManipleUserConsents_Model_ConsentVersion extends Zefram_Db_Table_Row
      */
     public function isMajorVersion()
     {
-        return $this->major_version_id === null;
+        return $this->major_version_id === $this->consent_version_id;
     }
 
     /**
@@ -32,6 +32,29 @@ class ManipleUserConsents_Model_ConsentVersion extends Zefram_Db_Table_Row
      */
     public function getMajorVersionId()
     {
-        return $this->isMajorVersion() ? $this->getId() : (int) $this->major_version_id;
+        return (int) $this->major_version_id;
+    }
+
+    public function save()
+    {
+        if (!$this->isStored()) {
+            $this->created_at = time();
+        } else {
+            $this->updated_at = time();
+        }
+
+        $result = null;
+
+        if (!$this->consent_version_id) {
+            $result = parent::save();
+        }
+
+        // Ensure empty major_version_id references this row
+        if (!$this->major_version_id) {
+            $this->major_version_id = $this->consent_version_id;
+            $result = null;
+        }
+
+        return $result ? $result : parent::save();
     }
 }

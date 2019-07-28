@@ -28,6 +28,14 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     }
 
     /**
+     * @return int
+     */
+    public function getLatestMajorVersionId()
+    {
+        return (int) $this->latest_major_version_id;
+    }
+
+    /**
      * @return string|null
      */
     public function getTitle()
@@ -41,5 +49,24 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     public function getBody()
     {
         return $this->LatestVersion ? $this->LatestVersion->body : null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDisplayPriority()
+    {
+        return (int) $this->display_priority;
+    }
+
+    public function save()
+    {
+        if (!$this->isStored()) {
+            $this->created_at = time();
+        } else {
+            $this->updated_at = time();
+        }
+
+        return parent::save();
     }
 }

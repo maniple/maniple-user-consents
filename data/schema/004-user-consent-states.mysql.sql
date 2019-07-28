@@ -6,6 +6,8 @@ CREATE TABLE user_consent_states (
 
     saved_at                INTEGER NOT NULL,
 
+    is_required             TINYINT(1) NOT NULL,
+
     state                   VARCHAR(32) NOT NULL,
 
     CONSTRAINT user_consent_states_user_consent_id_fkey

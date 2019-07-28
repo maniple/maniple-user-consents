@@ -1,28 +1,103 @@
-<h1>Consents management</h1>
+<style>
+    .consents__page {
+        position: relative;
+        display: block;
+        padding: 40px 50px;
+        min-height: 480px;
+    }
+    .consents__page h1 {
+        margin: 0 0 40px;
+    }
+    .consents__new-consent {
+        position: absolute;
+        top: 40px;
+        right: 50px;
+    }
+    .consents__list {
+        list-style: none;
+        margin: 40px 0;
+        padding: 0;
+        width: 100%;
+    }
+    .consents__list li {
+        padding: .5em 10px;
+        border-top: 1px solid rgba(0, 0, 0, .15);
+    }
+    .consents__list li:first-child {
+        border-top: 0;
+    }
+    .consents__list li:hover {
+        background: rgba(0, 0, 0, .05);
+    }
+    .consents__list-item-title small {
+        margin-left: 5px;
+        font-size: .75em;
+        text-transform: uppercase;
+        color: #080;
+    }
+    .consents__list-item-title.is-inactive small {
+        color: #800;
+    }
+    .consents__list-item-status {
+        font-size: .8em;
+    }
 
-<a href="{{ url('maniple-user-consents.consents.create') }}">New consent</a>
+    .consents__list li {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+    }
+    .consents__list li .col {
+        display: table-cell;
+    }
+    .consents__list li .col-actions {
+        display: table-cell;
+        width: 150px;
+        text-align: right;
+    }
+</style>
+<article class="consents__page">
+<h1>{{ translate('Consents management') }}</h1>
 
-<ul>
+<a href="{{ url('maniple-user-consents.consents.create') }}" class="consents__new-consent btn btn-primary">
+    <i class="fa fa-plus"></i>
+    {{ translate('New consent') }}
+</a>
+
+<ul class="consents__list">
 {% for consent in consents %}
     <li>
-        {{ consent.title }}
+        <div class="col">
+            <div class="consents__list-item-title{% if not consent.is_active %} is-inactive{% endif %}">
+                <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}">
+                    {{- consent.title -}}
+                </a>
+                <small>
+                    {% if consent.is_active %}
+                        {{ translate('Active') }}
+                    {% else %}
+                        {{ translate('Inactive') }}
+                    {% endif %}
+                </small>
+            </div>
 
-        {% if consent.is_active %}
-            Active
-        {% else %}
-            Inactive
-        {% endif %}
-
-        {% if consent.is_required %}
-            Required
-        {% else %}
-            Optional
-        {% endif %}
-
-        <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}">Edit</a>
-        <a href="">Delete</a>
+            <div class="consents__list-item-status">
+            {% if consent.is_required %}
+                {{ translate('Required') }}
+            {% else %}
+                {{ translate('Optional') }}
+            {% endif %}
+            </div>
+        </div>
+        <div class="col col-actions">
+            <a href="{{ url('maniple-user-consents.consents.edit', { consent_id: consent.id }) }}" class="btn btn-sm btn-primary">
+                <i class="fa fa-pencil"></i>
+                {{ translate('Edit') }}
+            </a>
+        </div>
     </li>
 {% else %}
     <li>No consents defined</li>
 {% endfor %}
 </ul>
+</article>

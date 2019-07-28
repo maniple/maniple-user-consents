@@ -42,7 +42,7 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
                 'is_required' => array(
                     'type' => 'checkbox',
                     'options' => array(
-                        'label' => 'Is active?',
+                        'label' => 'Is required?',
                     ),
                 ),
                 'is_active' => array(
@@ -73,15 +73,13 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
             $consent = $this->_consentsTable->createRow(array(
                 'is_required' => (int) $this->_form->getValue('is_required'),
                 'is_active'   => (int) $this->_form->getValue('is_active'),
-                'created_at'  => time(),
                 'system_key'  => $this->_form->getValue('system_key'),
             ));
             $consent->save();
 
             $consentVersion = $this->_consentVersionsTable->createRow(array(
-                'created_at' => time(),
-                'title'      => $this->_form->getValue('title'),
-                'body'       => $this->_form->getValue('body'),
+                'title' => $this->_form->getValue('title'),
+                'body'  => $this->_form->getValue('body'),
             ));
             $consentVersion->Consent = $consent;
             $consentVersion->save();
