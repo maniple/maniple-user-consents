@@ -213,6 +213,10 @@ class ManipleUserConsents_ConsentManager
         }
 
         foreach ($userConsents as $userConsent) {
+            if ($userConsent->isExpired()) {
+                continue;
+            }
+
             $majorVersionId = $userConsent->ConsentVersion->getMajorVersionId();
 
             if (empty($activeConsents[$majorVersionId])) {
