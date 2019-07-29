@@ -41,8 +41,8 @@ class ManipleUserConsents_ConsentsController_CreateAction extends Maniple_Contro
         $this->_db->beginTransaction();
         try {
             $consent = $this->_consentsTable->createRow(array(
-                'is_required' => (int) $this->_form->getValue('is_required'),
-                'is_active'   => (int) $this->_form->getValue('is_active'),
+                'is_required'      => (int) $this->_form->getValue('is_required'),
+                'is_active'        => (int) $this->_form->getValue('is_active'),
                 'display_priority' => (int) $this->_form->getValue('display_priority'),
             ));
             $consent->save();

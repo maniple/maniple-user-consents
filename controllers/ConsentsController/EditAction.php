@@ -37,9 +37,9 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
         $this->_consent = $consent;
 
         $this->_form = new ManipleUserConsents_Form_Consent($consent);
-        $this->_form->addElement('checkbox', 'create_major_version', array(
-            'label'       => 'Create major revision',
-            'description' => 'This will force all existing users to review and update their consents after logging in',
+        $this->_form->addElement('checkbox', 'major_version', array(
+            'label'       => 'Create major update',
+            'description' => 'If checked, users have to give consent again',
             'type'        => 'checkbox',
         ));
     }
@@ -72,7 +72,7 @@ class ManipleUserConsents_ConsentsController_EditAction extends Maniple_Controll
                 $version = $consent->LatestVersion;
             }
 
-            $shouldCreateMajorVersion = $data['create_major_version'];
+            $shouldCreateMajorVersion = $data['major_version'];
             if ($shouldCreateMajorVersion) {
                 // create major version or promote existing version to major, if there are none user consents
                 $version->major_version_id = null;

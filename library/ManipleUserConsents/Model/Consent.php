@@ -28,6 +28,14 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     }
 
     /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return (bool) $this->is_active;
+    }
+
+    /**
      * @return int
      */
     public function getLatestMajorVersionId()

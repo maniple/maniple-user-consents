@@ -6,15 +6,15 @@ CREATE TABLE user_consents (
 
     user_id                 INTEGER NOT NULL,
 
-    -- this is for displaying consent text
     consent_version_id      INTEGER NOT NULL,
 
-    -- was this consent required when the user made decision for the first time
     is_required             TINYINT(1) NOT NULL,
 
     display_priority        INTEGER NOT NULL DEFAULT 0,
 
     saved_at                INTEGER NOT NULL,
+
+    expires_at              INTEGER,
 
     state                   VARCHAR(64) NOT NULL,
 

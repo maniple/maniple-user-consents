@@ -305,6 +305,7 @@ class ManipleUserConsents_ConsentManager
         $userConsent->setFromArray(array(
             'is_required'      => $consent->isRequired() ? 1 : 0,
             'display_priority' => $consent->getDisplayPriority(),
+            'expires_at'       => date_create()->modify('+1 year')->getTimestamp(),
         ));
 
         if ($decision) {

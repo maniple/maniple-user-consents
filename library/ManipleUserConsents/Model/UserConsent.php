@@ -12,6 +12,7 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
     const STATE_ACCEPTED = 'ACCEPTED';
     const STATE_DECLINED = 'DECLINED';
     const STATE_REVOKED  = 'REVOKED';
+    const STATE_EXPIRED  = 'EXPIRED';
 
     protected $_tableClass = ManipleUserConsents_Model_Table_UserConsents::className;
 
@@ -36,7 +37,7 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
      */
     public function isAccepted()
     {
-        return $this->state === self::STATE_ACCEPTED;
+        return $this->state === self::STATE_ACCEPTED && !$this->isExpired();
     }
 
     /**
@@ -77,6 +78,23 @@ class ManipleUserConsents_Model_UserConsent extends Zefram_Db_Table_Row
     public function setRevoked()
     {
         return $this->_setState(self::STATE_REVOKED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return $this->state === self::STATE_EXPIRED
+            || ($this->expires_at !== null && $this->expires_at <= time());
+    }
+
+    /**
+     * @return $this
+     */
+    public function setExpired()
+    {
+        return $this->_setState(self::STATE_EXPIRED);
     }
 
     /**

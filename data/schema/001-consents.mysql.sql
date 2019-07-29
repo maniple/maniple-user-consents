@@ -16,6 +16,8 @@ CREATE TABLE consents (
 
     latest_version_id       INTEGER,
 
-    latest_major_version_id INTEGER
+    latest_major_version_id INTEGER,
+
+    INDEX consents_is_active_idx (is_active)
 
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
