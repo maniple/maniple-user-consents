@@ -1,6 +1,6 @@
 <?php
 
-class ManipleUserConsents_Filter_RelativizeHrefs
+class ManipleUserConsents_Filter_RelativizeHrefs implements Zend_Filter_Interface
 {
     /**
      * @param string $value
