@@ -321,7 +321,7 @@ class ManipleUserConsents_ConsentManager
             'user_consent_id' => $userConsent->getId(),
             'state'           => $userConsent->getState(),
             'saved_at'        => $userConsent->getSavedAt(),
-            'is_required'     => $userConsent->isRequired(),
+            'is_required'     => (int) $userConsent->isRequired(),
         ));
 
         return $userConsent;

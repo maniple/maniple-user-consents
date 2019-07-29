@@ -27,6 +27,12 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
      */
     protected $_userContext;
 
+    /**
+     * @Inject
+     * @var Zefram_Db
+     */
+    protected $_db;
+
     protected function _init()
     {
         parent::_init();
@@ -64,8 +70,16 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
 
     protected function _process()
     {
-        foreach ($this->_consentManager->getConsentDecisionsFromForm($this->_form) as $consentId => $decision) {
-            $this->_consentManager->saveUserConsent($this->_userContext->getUser(), $consentId, $decision);
+        $this->_db->beginTransaction();
+        try {
+            foreach ($this->_consentManager->getConsentDecisionsFromForm($this->_form) as $consentId => $decision) {
+                $this->_consentManager->saveUserConsent($this->_userContext->getUser(), $consentId, $decision);
+            }
+            $this->_db->commit();
+
+        } catch (Exception $e) {
+            $this->_db->rollBack();
+            throw $e;
         }
 
         // TODO redirect to user home
