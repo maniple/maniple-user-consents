@@ -7,6 +7,7 @@ class ManipleUserConsents_Form_ConsentsReview extends Zefram_Form2
         $options = array(
             'prefixPath' => array(
                 array(
+                    // TODO: Extract richText element to separate module?
                     'prefix' => 'ModEdu_Form_',
                     'path' => __DIR__ . '/../../../../mod-edu/library/Form',
                 ),

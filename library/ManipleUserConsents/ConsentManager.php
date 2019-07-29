@@ -111,9 +111,10 @@ class ManipleUserConsents_ConsentManager
     }
 
     /**
+     * @param bool $withLatestVersions
      * @return ManipleUserConsents_Model_Consent[]
      */
-    public function getActiveConsents()
+    public function getActiveConsents($withLatestVersions = false)
     {
         $consentsRowset = $this->_consentsTable->fetchAll(array(
             'is_active <> 0',
@@ -124,6 +125,27 @@ class ManipleUserConsents_ConsentManager
         foreach ($consentsRowset as $row) {
             /** @var ManipleUserConsents_Model_Consent $row */
             $consents[$row->getId()] = $row;
+        }
+
+        if ($withLatestVersions && count($consents)) {
+            $consentVersionsRowset = $this->_consentVersionsTable->fetchAll(array(
+                'consent_version_id IN (?)' => array_map(function (ManipleUserConsents_Model_Consent $consent) {
+                    return $consent->getLatestVersionId();
+                }, $consents),
+            ));
+
+            /** @var ManipleUserConsents_Model_ConsentVersion[] $consentVersions */
+            $consentVersions = array();
+            foreach ($consentVersionsRowset as $row) {
+                $consentVersions[$row->getId()] = $row;
+            }
+
+            foreach ($consents as $consent) {
+                $latestVersionId = $consent->getLatestVersionId();
+                $consent->LatestVersion = isset($consentVersions[$latestVersionId])
+                    ? $consentVersions[$latestVersionId]
+                    : null;
+            }
         }
 
         return $consents;

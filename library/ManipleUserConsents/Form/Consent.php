@@ -7,6 +7,7 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
         $options = array(
             'prefixPath' => array(
                 array(
+                    // TODO: Extract richText element to separate module?
                     'prefix' => 'ModEdu_Form_',
                     'path'   => __DIR__ . '/../../../../mod-edu/library/Form',
                 ),
@@ -69,5 +70,7 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
         }
 
         parent::__construct($options);
+
+        $this->getElement('body')->addFilter(new ManipleUserConsents_Filter_RelativizeHrefs());
     }
 }

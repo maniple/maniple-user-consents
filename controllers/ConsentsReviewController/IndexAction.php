@@ -52,7 +52,7 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
             exit;
         }
 
-        if ($this->getParam('hasMissingConsents') !== true) {
+        if ($this->getParam('has_missing_consents') !== true) {
             $this->_helper->redirector->gotoUrlAndExit('/');
             exit;
         }

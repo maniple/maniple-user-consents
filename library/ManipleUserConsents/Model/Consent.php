@@ -38,6 +38,14 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
     /**
      * @return int
      */
+    public function getLatestVersionId()
+    {
+        return (int) $this->latest_version_id;
+    }
+
+    /**
+     * @return int
+     */
     public function getLatestMajorVersionId()
     {
         return (int) $this->latest_major_version_id;
