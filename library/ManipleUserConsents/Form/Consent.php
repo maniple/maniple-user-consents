@@ -29,8 +29,8 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
                 'is_required' => array(
                     'type' => 'checkbox',
                     'options' => array(
-                        'label'       => 'Make obligatory',
-                        'description' => 'When checked users have to accept this consent in order to access the page',
+                        'label'       => 'Required',
+                        'description' => 'When checked users have to accept this consent in order to use the page',
                     ),
                 ),
                 'is_active' => array(
