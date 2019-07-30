@@ -20,12 +20,14 @@ class ManipleUserConsents_Filter_RelativizeHrefs implements Zend_Filter_Interfac
         $serverUrlHelper = new Zend_View_Helper_ServerUrl();
         $serverUrl = $serverUrlHelper->serverUrl();
 
-        return preg_replace_callback('/(href=")([^"]+)/i', function (array $matches) use ($serverUrl) {
+        $result = preg_replace_callback('/(href=")([^"]+)/i', function (array $matches) use ($serverUrl) {
             $url = $matches[2];
-            if (stripos($url, $serverUrl)) {
+            if (stripos($url, $serverUrl) !== false) {
                 $url = substr($url, strlen($serverUrl));
             }
             return $matches[1] . $url;
         }, (string) $value);
+
+        return $result;
     }
 }
