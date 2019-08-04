@@ -66,6 +66,9 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
     protected function _prepare()
     {
         $this->_form = $this->_consentManager->createConsentsUpdateForm($this->_userContext->getUser());
+        $this->_form->addElement('hidden', 'continue_url', array(
+            'value' => $this->getScalarParam('continue_url'),
+        ));
     }
 
     protected function _process()
@@ -82,7 +85,18 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
             throw $e;
         }
 
-        // TODO redirect to user home
-        $this->_helper->redirector->gotoRoute('doko.workshops.my_meetings');
+        $continueUrl = $this->_form->getValue('continue_url');
+        if (substr($continueUrl, 0, 1) !== '/') {
+            $continueUrl = null;
+        }
+
+        if (!$continueUrl) {
+            $config = $this->getResource('modules')->offsetGet('maniple-user')->getOptions();
+            $continueUrl = isset($config['afterLoginRoute'])
+                ? $this->view->url($config['afterLoginRoute'])
+                : $this->view->baseUrl('/');
+        }
+
+        $this->_helper->redirector->gotoUrlAndExit($continueUrl);
     }
 }

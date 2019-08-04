@@ -10,8 +10,12 @@
 
     {{ form().openTag(form) | raw }}
 
-    {% for elem in form.getElements() %}
-        {{ renderScript('maniple-user-consents/forms/element-checkbox.twig', { elem: elem | raw }) }}
+    {% for name, elem in form.getElements() %}
+        {% if elem.helper == 'formHidden' %}
+            {{ formElement('hidden', elem) | raw }}
+        {% else %}
+            {{ renderScript('maniple-user-consents/forms/element-checkbox.twig', { elem: elem | raw }) }}
+        {% endif %}
     {% endfor %}
 
     <p class="text-center">

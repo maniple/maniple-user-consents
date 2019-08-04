@@ -4,6 +4,8 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
 {
     const className = __CLASS__;
 
+    const REDIRECT_ROUTE = 'maniple-user-consents.consents-review.index';
+
     /**
      * @Inject('user.sessionManager')
      * @var ManipleUser_Service_Security
@@ -58,9 +60,22 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
             return;
         }
 
-        $request->setModuleName('maniple-user-consents');
-        $request->setControllerName('consents-review');
-        $request->setActionName('index');
+        /** @var Zend_Controller_Router_Rewrite $router */
+        $router = Zend_Controller_Front::getInstance()->getRouter();
+
+        /** @var Zend_Controller_Router_Route_Module $route */
+        $route = $router->getRoute(self::REDIRECT_ROUTE);
+        $routeUrl = $router->assemble(array(), self::REDIRECT_ROUTE);
+
+        $routeDefaults = $route->getDefaults();
+
+        $request->setModuleName($routeDefaults['module']);
+        $request->setControllerName($routeDefaults['controller']);
+        $request->setActionName($routeDefaults['action']);
+
+        $continueUrl = $requestUri === '/' || $routeUrl === strtok($requestUri, '?') ? null : $requestUri;
+
         $request->setParam('has_missing_consents', true);
+        $request->setParam('continue_url', $continueUrl);
     }
 }
