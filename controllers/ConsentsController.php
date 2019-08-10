@@ -11,11 +11,11 @@ class ManipleUserConsents_ConsentsController extends Maniple_Controller_Action
      * @Inject('user.sessionManager')
      * @var ManipleUser_Service_Security
      */
-    protected $_userContext;
+    protected $_securityContext;
 
     public function checkAccess()
     {
-        if (!$this->_userContext->isAuthenticated()) {
+        if (!$this->_securityContext->isAuthenticated()) {
             if ($this->_request->isXmlHttpRequest()) {
                 $this->_helper->json(array(
                     'status' => 'error',
@@ -30,7 +30,7 @@ class ManipleUserConsents_ConsentsController extends Maniple_Controller_Action
             exit;
         }
 
-        if (!$this->_userContext->isSuperUser()) {
+        if (!$this->_securityContext->isAllowed('manage_consents')) {
             throw new Maniple_Controller_Exception_NotAllowed();
         }
     }

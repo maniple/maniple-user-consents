@@ -25,7 +25,7 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
      * @Inject('user.sessionManager')
      * @var ManipleUser_Service_Security
      */
-    protected $_userContext;
+    protected $_securityContext;
 
     /**
      * @Inject
@@ -37,7 +37,7 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
     {
         parent::_init();
 
-        if (!$this->_userContext->isAuthenticated()) {
+        if (!$this->_securityContext->isAuthenticated()) {
             if ($this->_request->isXmlHttpRequest()) {
                 $this->_helper->json(array(
                     'status' => 'error',
@@ -65,7 +65,7 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
 
     protected function _prepare()
     {
-        $this->_form = $this->_consentManager->createConsentsUpdateForm($this->_userContext->getUser());
+        $this->_form = $this->_consentManager->createConsentsUpdateForm($this->_securityContext->getUser());
         $this->_form->addElement('hidden', 'continue_url', array(
             'value' => $this->getScalarParam('continue_url'),
         ));
@@ -76,7 +76,7 @@ class ManipleUserConsents_ConsentsReviewController_IndexAction extends Maniple_C
         $this->_db->beginTransaction();
         try {
             foreach ($this->_consentManager->getConsentDecisionsFromForm($this->_form) as $consentId => $decision) {
-                $this->_consentManager->saveUserConsent($this->_userContext->getUser(), $consentId, $decision);
+                $this->_consentManager->saveUserConsent($this->_securityContext->getUser(), $consentId, $decision);
             }
             $this->_db->commit();
 

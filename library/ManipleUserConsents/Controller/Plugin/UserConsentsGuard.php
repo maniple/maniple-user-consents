@@ -10,7 +10,7 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
      * @Inject('user.sessionManager')
      * @var ManipleUser_Service_Security
      */
-    protected $_authContext;
+    protected $_securityContext;
 
     /**
      * @Inject
@@ -24,8 +24,7 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
             return;
         }
 
-        // TODO: No need to enforce consents if user has Consents Manager permission
-        if (!$this->_authContext->isAuthenticated() /* || $this->_authContext->isSuperUser() */) {
+        if (!$this->_securityContext->isAuthenticated() || $this->_securityContext->isAllowed('manage_consents')) {
             return;
         }
 
@@ -54,7 +53,7 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
         // TODO: 2) Check MAX(updated_at) of consent versions
         // TODO: 3) Store (bool) getMissingConsents() in user session with date when it was
         //       computed, if earlier than MAX(updated_at) then need to recompute
-        $missingConsents = $this->_consentManager->getMissingConsents($this->_authContext->getUser()->getId());
+        $missingConsents = $this->_consentManager->getMissingConsents($this->_securityContext->getUser()->getId());
 
         if (empty($missingConsents)) {
             return;

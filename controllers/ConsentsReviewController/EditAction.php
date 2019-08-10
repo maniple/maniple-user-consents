@@ -16,12 +16,6 @@ class ManipleUserConsents_ConsentsReviewController_EditAction extends Maniple_Co
      */
     protected $_settingsManager;
 
-    /**
-     * @Inject('user.sessionManager')
-     * @var ManipleUser_Service_Security
-     */
-    protected $_userContext;
-
     protected function _init()
     {
         parent::_init();
