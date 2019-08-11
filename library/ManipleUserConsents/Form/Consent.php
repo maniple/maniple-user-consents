@@ -9,7 +9,7 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
                 array(
                     // TODO: Extract richText element to separate module?
                     'prefix' => 'DokoEvent_Form_',
-                    'path'   => __DIR__ . '/../../../../doko-event/library/Form',
+                    'path'   => __DIR__ . '/../../../../doko-event/library/DokoEvent/Form',
                 ),
             ),
             'elements' => array(
