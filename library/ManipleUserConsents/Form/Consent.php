@@ -71,6 +71,16 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
 
         parent::__construct($options);
 
-        $this->getElement('body')->addFilter(new ManipleUserConsents_Filter_RelativizeHrefs());
+        $this->getElement('body')->clearFilters();
+        $this->getElement('body')->addFilter(
+            new Zefram_Filter(array(
+                array('PregReplace', array(
+                    'match'   => '/\s(href=[\'"])/',
+                    'replace' => ' target="_blank" $1',
+                )),
+                new DokoEvent_Filter_Html(),
+                new ManipleUserConsents_Filter_RelativizeHrefs(),
+            ))
+        );
     }
 }
