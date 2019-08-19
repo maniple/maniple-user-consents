@@ -77,10 +77,10 @@ class ManipleUserConsents_Model_Consent extends Zefram_Db_Table_Row
 
     public function save()
     {
+        $this->updated_at = time();
+
         if (!$this->isStored()) {
-            $this->created_at = time();
-        } else {
-            $this->updated_at = time();
+            $this->created_at = $this->updated_at;
         }
 
         return parent::save();

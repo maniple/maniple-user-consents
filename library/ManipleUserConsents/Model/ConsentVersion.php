@@ -37,14 +37,16 @@ class ManipleUserConsents_Model_ConsentVersion extends Zefram_Db_Table_Row
 
     public function save()
     {
+        $this->updated_at = time();
+
         if (!$this->isStored()) {
-            $this->created_at = time();
-        } else {
-            $this->updated_at = time();
+            $this->created_at = $this->updated_at;
         }
 
         $result = null;
 
+        // In order to make major_version_id reference this row, we need
+        // to save it, to get its primary key value
         if (!$this->consent_version_id) {
             $result = parent::save();
         }
