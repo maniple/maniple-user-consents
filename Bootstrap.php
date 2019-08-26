@@ -72,7 +72,7 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
         $sharedEventManager = $this->getResource('SharedEventManager');
 
         $sharedEventManager->attach(
-            ManipleUser_Signup_SignupManager::className,
+            ManipleUser_Service_Signup::className,
             'createSignupForm',
             function (Zend_EventManager_Event $event) use ($that) {
                 /** @var ManipleUserConsents_ConsentManager $consentManager */
@@ -83,7 +83,7 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
         );
 
         $sharedEventManager->attach(
-            ManipleUser_Signup_SignupManager::className,
+            ManipleUser_Service_Signup::className,
             'createUser',
             function (Zend_EventManager_Event $event) use ($that) {
                 /** @var ManipleUserConsents_ConsentManager $consentManager */
