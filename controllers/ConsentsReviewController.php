@@ -30,7 +30,7 @@ class ManipleUserConsents_ConsentsReviewController extends Maniple_Controller_Ac
             exit;
         }
 
-        if (!$this->_securityContext->isAllowed('manage_consents')) {
+        if (!$this->_securityContext->isAllowed(ManipleUserConsents_Perm::MANAGE_CONSENTS)) {
             throw new Maniple_Controller_Exception_NotAllowed();
         }
     }

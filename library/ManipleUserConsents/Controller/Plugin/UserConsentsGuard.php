@@ -24,12 +24,14 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
             return;
         }
 
-        if (!$this->_securityContext->isAuthenticated() || $this->_securityContext->isAllowed('manage_consents')) {
+        if (!$this->_securityContext->isAuthenticated()
+            || $this->_securityContext->isAllowed(ManipleUserConsents_Perm::MANAGE_CONSENTS)
+        ) {
             return;
         }
 
-        if (($request->getModuleName() === 'maniple-user' && $request->getControllerName() === 'auth') ||
-            ($request->getControllerName() === 'error')
+        if (($request->getModuleName() === 'maniple-user' && $request->getControllerName() === 'auth')
+            || ($request->getControllerName() === 'error')
         ) {
             return;
         }
