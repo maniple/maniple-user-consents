@@ -12,55 +12,43 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
 
     public function getResourcesConfig()
     {
-        return require dirname(__FILE__) . '/configs/resources.config.php';
+        return require __DIR__ . '/configs/resources.config.php';
     }
 
     public function getRoutesConfig()
     {
-        return require dirname(__FILE__) . '/configs/routes.config.php';
+        return require __DIR__ . '/configs/routes.config.php';
     }
 
     public function getTranslationsConfig()
     {
         return array(
             'scan'    => Zend_Translate::LOCALE_DIRECTORY,
-            'content' => dirname(__FILE__) . '/languages',
+            'content' => __DIR__ . '/languages',
         );
     }
 
     public function getViewConfig()
     {
         return array(
-            'scriptPaths' => dirname(__FILE__) . '/views/scripts',
+            'scriptPaths' => __DIR__ . '/views/scripts',
             'helperPaths' => array(
-                'ManipleUserConsents_View_Helper_' => dirname(__FILE__) . '/library/ManipleUserConsents/View/Helper/',
+                'ManipleUserConsents_View_Helper_' => __DIR__ . '/library/ManipleUserConsents/View/Helper/',
             ),
+            'scriptPathSpec' => ':module/:controller/:action.:suffix',
+            'suffix' => 'twig',
         );
     }
 
-    /**
-     * Register autoloader paths
-     */
-    protected function _initAutoloader()
+    public function getAutoloaderConfig()
     {
-        Zend_Loader_AutoloaderFactory::factory(array(
+        return array(
             'Zend_Loader_StandardAutoloader' => array(
                 'prefixes' => array(
-                    'ManipleUserConsents_' => dirname(__FILE__) . '/library/ManipleUserConsents/',
+                    'ManipleUserConsents_' => __DIR__ . '/library/ManipleUserConsents/',
                 ),
             ),
-        ));
-    }
-
-    /**
-     * Setup view path spec
-     */
-    protected function _initViewRenderer()
-    {
-        /** @var Zefram_Controller_Action_Helper_ViewRenderer $viewRenderer */
-        $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-        $viewRenderer->setViewScriptPathSpec(':module/:controller/:action.:suffix', 'maniple-user-consents');
-        $viewRenderer->setViewSuffix('twig', 'maniple-user-consents');
+        );
     }
 
     protected function _initSharedEventManager()
@@ -134,6 +122,15 @@ class ManipleUserConsents_Bootstrap extends Maniple_Application_Module_Bootstrap
                     )
                 );
             }
+        );
+    }
+
+    public function getMenuManagerConfig()
+    {
+        return array(
+            'builders' => array(
+                ManipleUserConsents_Menu_MenuBuilder::className,
+            ),
         );
     }
 }
