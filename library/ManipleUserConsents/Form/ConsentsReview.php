@@ -5,13 +5,6 @@ class ManipleUserConsents_Form_ConsentsReview extends Zefram_Form2
     public function __construct(ManipleCore_Settings_SettingsManager $settingsManager)
     {
         $options = array(
-            'prefixPath' => array(
-                array(
-                    // TODO: Extract richText element to separate module?
-                    'prefix' => 'DokoEvent_Form_',
-                    'path' => __DIR__ . '/../../../../doko-event/library/DokoEvent/Form',
-                ),
-            ),
             'elements' => array(
                 'title' => array(
                     'type' => 'text',
@@ -21,7 +14,7 @@ class ManipleUserConsents_Form_ConsentsReview extends Zefram_Form2
                     ),
                 ),
                 'body' => array(
-                    'type' => 'richText',
+                    'type' => 'editor',
                     'options' => array(
                         'label' => 'Body text',
                     ),

@@ -5,13 +5,6 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
     public function __construct(ManipleUserConsents_Model_Consent $consent = null)
     {
         $options = array(
-            'prefixPath' => array(
-                array(
-                    // TODO: Extract richText element to separate module?
-                    'prefix' => 'DokoEvent_Form_',
-                    'path'   => __DIR__ . '/../../../../doko-event/library/DokoEvent/Form',
-                ),
-            ),
             'elements' => array(
                 'title' => array(
                     'type' => 'text',
@@ -21,7 +14,7 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
                     ),
                 ),
                 'body' => array(
-                    'type' => 'richText',
+                    'type' => 'editor',
                     'options' => array(
                         'required' => true,
                         'label' => 'Consent text',
@@ -64,21 +57,21 @@ class ManipleUserConsents_Form_Consent extends Zefram_Form2
                 'title'            => $consent->getTitle(),
                 'body'             => $consent->getBody(),
                 'is_required'      => (int) $consent->isRequired(),
-                'is_active'        => (int) $consent->is_active,
+                'is_active'        => (int) $consent->isActive(),
                 'display_priority' => $consent->getDisplayPriority(),
             );
         }
 
         parent::__construct($options);
 
-        $this->getElement('body')->clearFilters();
-        $this->getElement('body')->addFilter(
+        /** @var ManipleEditor_Form_Element_Editor $bodyElement */
+        $bodyElement = $this->getElement('body');
+        $bodyElement->prependFilter(
             new Zefram_Filter(array(
                 array('PregReplace', array(
                     'match'   => '/\s(href=[\'"])/',
                     'replace' => ' target="_blank" $1',
                 )),
-                new DokoEvent_Filter_Html(),
                 new ManipleUserConsents_Filter_RelativizeHrefs(),
             ))
         );
