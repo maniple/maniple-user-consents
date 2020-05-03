@@ -240,9 +240,27 @@ class ManipleUserConsents_ConsentManager
      */
     public function onCreateSignupForm(Zend_Form $form)
     {
+        // temporarily remove button(s) from the end of the form
+        $buttons = array();
+        foreach (array_reverse($form->getElements()) as $element) {
+            if ($element instanceof Zend_Form_Element_Button || $element instanceof Zend_Form_Element_Submit) {
+                array_unshift($buttons, $element);
+            } else {
+                break;
+            }
+        }
+        foreach ($buttons as $button) {
+            $form->removeElement($button->getName());
+        }
+
         foreach ($this->getActiveConsents() as $consent) {
             /** @var ManipleUserConsents_Model_Consent $consent */
             $this->_addConsentCheckbox($form, $consent);
+        }
+
+        // add back buttons
+        foreach ($buttons as $button) {
+            $form->addElement($button);
         }
     }
 
@@ -272,11 +290,20 @@ class ManipleUserConsents_ConsentManager
             ));
         }
 
-        $form->addElement('Checkbox', 'consent_' . $consent->getId(), array(
+        $elementName = 'consent_' . $consent->getId();
+        $form->addElement('Checkbox', $elementName, array(
             'required'   => $consent->isRequired(),
             'label'      => $consent->getBody(),
             'validators' => $validators,
         ));
+
+        /** @var Zefram_Form_Element_Checkbox $element */
+        $element = $form->getElement($elementName);
+
+        if (false !== ($label = $element->getDecorator('Label'))) {
+            /** @var Zend_Form_Decorator_Label $label */
+            $label->setOption('escape', false);
+        }
     }
 
     /**
