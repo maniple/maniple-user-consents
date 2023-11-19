@@ -25,6 +25,7 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
         }
 
         if (!$this->_securityContext->isAuthenticated()
+            || $this->_securityContext->isImpersonated()
             || $this->_securityContext->isAllowed(ManipleUserConsents_Perm::MANAGE_CONSENTS)
         ) {
             return;
@@ -36,7 +37,8 @@ class ManipleUserConsents_Controller_Plugin_UserConsentsGuard extends Zend_Contr
             return;
         }
 
-        // Allow request URIs present in hrefs in latest versions of active consents
+        // Urls referenced in the active consents' bodies are allowed, as they typically contain
+        // some relevant legal information, terms and conditions, etc.
         $requestUri = $request->getRequestUri();
 
         // TODO: 1) Cache these results
